@@ -17,6 +17,22 @@ const CORS_HEADERS: Record<string, string> = {
 	'Access-Control-Max-Age': '86400',
 }
 
+/** Browser fingerprint headers injected on outgoing requests to bypass bot detection. */
+const BROWSER_HEADERS: Record<string, string> = {
+	'User-Agent':
+		'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36',
+	'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+	'Accept-Language': 'en-US,en;q=0.9',
+	'sec-ch-ua': '"Google Chrome";v="131", "Chromium";v="131", "Not_A Brand";v="24"',
+	'sec-ch-ua-mobile': '?0',
+	'sec-ch-ua-platform': '"Windows"',
+	'sec-fetch-dest': 'document',
+	'sec-fetch-mode': 'navigate',
+	'sec-fetch-site': 'none',
+	'sec-fetch-user': '?1',
+	'upgrade-insecure-requests': '1',
+}
+
 /** Attach CORS headers to every response, including errors. */
 app.use('*', async (c, next) => {
 	await next()
@@ -80,6 +96,10 @@ app.all('/*', async (c) => {
 
 	const proxyReq = new Request(parsed, c.req.raw)
 	proxyReq.headers.set('Origin', parsed.origin)
+
+	for (const [k, v] of Object.entries(BROWSER_HEADERS)) {
+		proxyReq.headers.set(k, v)
+	}
 
 	for (const key of [...proxyReq.headers.keys()]) {
 		if (/^(host|cf-|x-forwarded-|cdn-)/i.test(key)) {
