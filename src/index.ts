@@ -17,6 +17,14 @@ const CORS_HEADERS: Record<string, string> = {
 	'Access-Control-Max-Age': '86400',
 }
 
+/** Attach CORS headers to every response, including errors. */
+app.use('*', async (c, next) => {
+	await next()
+	for (const [k, v] of Object.entries(CORS_HEADERS)) {
+		c.res.headers.set(k, v)
+	}
+})
+
 /**
  * Extract and validate the target URL from the incoming request path.
  * Incoming path format: /<full-target-url>
