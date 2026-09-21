@@ -1,0 +1,12 @@
+{
+	"$schema": "node_modules/wrangler/config-schema.json",
+	"name": "cf-forward-proxy",
+	"main": "src/index.ts",
+	"compatibility_date": "2025-10-11",
+	"observability": {
+		"enabled": true
+	},
+	"vars": {
+		"PROXY_TOKEN": ""
+	}
+}
